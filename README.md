@@ -39,3 +39,35 @@ The Power BI dashboard includes:
 - Interactive filters for deeper analysis
 
 ## Repository Structure
+
+Customer_behaviour_analysis/
+
+│
+├── data/                     # Dataset used for analysis  
+├── sql_queries.sql           # SQL queries for customer insights  
+├── customer_analysis.py      # Python script for data cleaning and EDA  
+├── Customer_dashboard.pbix   # Power BI dashboard file  
+└── README.md                 # Project documentation  
+
+## Key Insights
+
+- A small percentage of customers contribute significantly to total revenue.
+- Purchase behaviour varies across different locations.
+- High-spending customers can be identified for targeted marketing strategies.
+- Transaction data reveals trends useful for business decision making.
+
+## Dashboard Preview
+
+The Power BI dashboard provides an interactive overview of customer purchasing behaviour and key business metrics.
+
+
+## Future Improvements
+
+- Implement predictive analytics to forecast customer purchase behaviour.
+- Apply machine learning models for customer segmentation.
+- Expand the dataset for deeper behavioural analysis.
+
+## Author
+
+Sameera Alex  
+GitHub: https://github.com/sameeraalex2001-hash
