@@ -1,0 +1,109 @@
+-- revenue genarted by customers based on genders male and female
+USE customer_behaviour;
+SELECT gender, sum(PURCHASE_AMOUNT) AS revenue
+FROM customer
+GROUP BY gender
+
+-- which customers used discount but still spent more than average purchase amount
+SELECT customer_id, purchase_amount
+FROM customer
+WHERE discount_applied = 'Yes' AND purchase_amount >= (SELECT avg(purchase_amount) FROM customer)
+
+-- which are the 5 product with highest average review rating
+SELECT item_purchased AS product,
+       ROUND(AVG(CAST(review_rating AS DECIMAL)), 2) AS `Average Review Rating`
+FROM customer
+
+ORDER BY AVG(review_rating) DESC
+LIMIT 5;
+
+-- compare the average purchse amount between standard and express shipping 
+SELECT ROUND(AVG(purchase_amount),2) AS 'Average purchase amount', shipping_type
+FROM customer
+WHERE shipping_type IN ('express', 'standard')
+GROUP BY shipping_type
+
+
+-- Do subscribed customers spend more? caompare average spend and total revenue between subscribers and non-subscribers
+ SELECT subscription_status,
+ COUNT(customer_id) AS total_customers,
+ ROUND(AVG(purchase_amount),2) AS 'AVERAGE SPEND',
+ ROUND(SUM(PURCHASE_AMOUNT),2) AS REVENUE
+ FROM customer
+ GROUP BY subscription_status
+ 
+-- which 5 products have the highest percenatge of purchases with discount applied?
+SELECT item_purchased AS products,
+       ROUND(
+           100.0 * SUM(CASE WHEN discount_applied = 'Yes' THEN 1 ELSE 0 END)
+           / COUNT(*),
+           2
+       ) AS purchase_amount
+FROM customer
+GROUP BY item_purchased
+ORDER BY purchase_amount DESC
+LIMIT 5
+
+-- segment customers into NEW, returning, loyal based on tyheir total numebr of previous purchases and shiow the count of ech segment
+WITH customer_type AS (
+SELECT customer_id, previous_purchases,
+CASE
+WHEN previous_purchases = 1 THEN 'New'
+WHEN previous_purchases BETWEEN 2 AND 10 THEN 'Returning'
+ELSE 'Loyal'
+END AS 'customer_support'
+FROM customer
+)
+SELECT customer_support, COUNT(*) AS 'number of customers'
+FROM customer_type
+GROUP BY customer_support
+
+-- which are the top 3 most purchased products in each category
+WITH item_counts AS (
+SELECT category, item_purchased, count(customer_id) AS total_orders,
+ROW_NUMBER() over (partition by category order by count(customer_id) DESC) as item_rank
+FROM customer
+GROUP BY category, item_purchased
+)
+SELECT item_rank, category, item_purchased, total_orders
+FROM item_counts
+WHERE item_rank <= 3
+-- are customers more than 5 previous purchases most likely to subscribe
+SELECT subscription_status, COUNT(customer_id) AS no_of_customers
+FROM customer
+WHERE previous_purchases > 5
+GROUP BY subscription_status
+
+-- what is the revenue contribution of each age?
+
+SELECT age_group, SUM(purchase_amount) AS revenue_contribution
+FROM customer
+GROUP BY age_group
+ORDER BY revenue_contribution DESC
+
+-- Find the top 5 customers with the highest total purchase amount.
+USE customer_behaviour;
+
+SELECT customer_id, SUM(purchase_amount) AS total_purchase
+FROM customer
+GROUP BY customer_id
+ORDER BY total_purchase DESC
+LIMIT 5;
+
+-- count how many customers belong to each city
+SELECT location, COUNT(customer_id) AS no_of_customers
+FROM customer
+GROUP BY location
+ORDER BY no_of_customers DESC
+
+-- Find total spending for each customer.
+SELECT *
+FROM customer
+
+
+
+
+
+
+
+ 
